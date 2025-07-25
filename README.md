@@ -154,7 +154,8 @@ clemens-detector/
 ├── apache_log_detector.py    # メインスクリプト
 ├── config.yaml              # 設定ファイル
 ├── requirements.txt         # 依存関係
-├── apache_log_only_requirements.md  # 要件定義書
+├── apache_log_only_requirements.md      # 要件定義書
+├── simple_implementation_plan.md        # 実装計画書
 └── README.md               # 説明書
 ```
 
