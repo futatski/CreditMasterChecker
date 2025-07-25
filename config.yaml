@@ -1,0 +1,99 @@
+# Apacheログのみ クレマス攻撃検出設定ファイル
+
+# ログファイル設定
+log_file:
+  path: "/var/log/apache2/access.log"
+  format: "apache"
+
+# 監視設定
+monitoring:
+  interval: 10  # 監視間隔（秒）
+
+# 検出ルール設定
+detection:
+  # 大量リクエスト検出
+  rapid_requests:
+    enabled: true
+    threshold: 100  # 60秒間に100回以上のリクエスト
+    time_window: 60  # 秒
+    severity: "HIGH"
+  
+  # 決済関連URL検出
+  payment_urls:
+    enabled: true
+    target_urls:
+      - "/shopping/payment.php"
+      - "/shopping/confirm.php"
+      - "/shopping/complete.php"
+      - "/shopping/veritrans/"
+      - "/shopping/veritrans/process.php"
+      - "/shopping/veritrans/result.php"
+      - "/shopping/payment_credit.php"
+      - "/shopping/payment_veritrans.php"
+    threshold: 50  # 60秒間に50回以上のアクセス
+    time_window: 60  # 秒
+    severity: "CRITICAL"
+  
+  # 認証失敗検出
+  auth_failures:
+    enabled: true
+    status_codes:
+      - 401  # Unauthorized
+      - 403  # Forbidden
+    threshold: 10  # 5分間に10回以上の認証失敗
+    time_window: 300  # 秒
+    severity: "HIGH"
+  
+  # 怪しいUser-Agent検出
+  suspicious_user_agents:
+    enabled: true
+    patterns:
+      - "bot"
+      - "crawler"
+      - "spider"
+      - "scraper"
+      - "curl"
+      - "wget"
+      - "python"
+      - "java"
+      - "perl"
+      - "ruby"
+    threshold: 5  # 5分間に5回以上の怪しいUser-Agent
+    time_window: 300  # 秒
+    severity: "MEDIUM"
+
+# 通知設定
+notifications:
+  # メール通知
+  email:
+    enabled: true
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    username: "your-email@gmail.com"
+    password: "your-app-password"
+    recipients: 
+      - "admin@example.com"
+      - "security@example.com"
+  
+  # Slack通知（オプション）
+  slack:
+    enabled: false
+    webhook_url: "https://hooks.slack.com/..."
+
+# ログ設定
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  file: "/var/log/clemens-detector.log"
+  max_size: "10MB"
+  backup_count: 5
+
+# ホワイトリスト設定（オプション）
+whitelist:
+  ips:
+    - "127.0.0.1"
+    - "::1"
+    - "192.168.1.1"  # 内部ネットワーク
+  user_agents:
+    - "Googlebot"
+    - "Bingbot"
+    - "Slurp"  # Yahoo
